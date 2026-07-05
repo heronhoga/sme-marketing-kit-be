@@ -16,7 +16,14 @@ func DBInit() (*sql.DB, error) {
 	dbPassword := os.Getenv("DATABASE_PASSWORD")
 	dbPort := os.Getenv("DATABASE_PORT")
 
-	connString := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", dbUser, dbPassword, dbHost, dbPort, dbName)
+	connString := fmt.Sprintf(
+    "%s:%s@tcp(%s:%s)/%s?parseTime=true",
+    dbUser,
+    dbPassword,
+    dbHost,
+    dbPort,
+    dbName,
+	)
 	
 	db, err := sql.Open("mysql", connString)
 	if err != nil {
