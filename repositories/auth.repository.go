@@ -1,7 +1,13 @@
 package repositories
 
-type AuthRepository struct {}
+import "database/sql"
 
-func NewAuthRepository() *AuthRepository {
-	return &AuthRepository{}
+type AuthRepository struct {
+	dbconn *sql.DB
+}
+
+func NewAuthRepository(dbconn *sql.DB) *AuthRepository {
+	return &AuthRepository{
+		dbconn: dbconn,
+	}
 }
