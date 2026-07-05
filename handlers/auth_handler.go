@@ -4,6 +4,7 @@ import (
 	"github.com/gofiber/fiber/v3"
 	"github.com/heronhoga/sme-marketing-kit-be/models"
 	"github.com/heronhoga/sme-marketing-kit-be/services"
+	"github.com/heronhoga/sme-marketing-kit-be/utils"
 )
 
 type AuthHandler struct {
@@ -16,9 +17,9 @@ func NewAuthHandler(service *services.AuthService) *AuthHandler {
 	}
 }
 
-func (h *AuthHandler) Login(c fiber.Ctx) error {
-	var loginRequest models.LoginRequest
-	err := c.Bind().Body(&loginRequest)
+func (h *AuthHandler) Register(c fiber.Ctx) error {
+	var registerRequest models.RegisterRequest
+	err := c.Bind().Body(&registerRequest)
 	if err != nil {
 		return c.Status(400).JSON(fiber.Map{
 			"error": true,
@@ -26,14 +27,54 @@ func (h *AuthHandler) Login(c fiber.Ctx) error {
 		})
 	}
 
-	if loginRequest.Email == "" || loginRequest.Password == "" {
+	if registerRequest.Email == "" || registerRequest.Name == "" || registerRequest.Password == "" {
 		return c.Status(400).JSON(fiber.Map{
 			"error": true,
 			"message": "All Fields Are Required",
 		})
 	}
+
+	// check if email pattern is right
+	err = utils.CheckEmailPattern(registerRequest.Email)
+	if err != nil {
+		return c.Status(400).JSON(fiber.Map{
+			"error": true,
+			"message": err.Error(),
+		})
+	}
+
+	err = h.service.RegisterService(c, registerRequest)
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{
+			"error": true,
+			"message": err.Error(),
+		})
+	}
+
 	return c.Status(200).JSON(fiber.Map{
 		"error": false,
+		"message": "Register Successful",
+	})
+}
+
+func (h *AuthHandler) Login(c fiber.Ctx) error {
+	var loginRequest models.LoginRequest
+	err := c.Bind().Body(&loginRequest)
+	if err != nil {
+		return c.Status(400).JSON(fiber.Map{
+			"error":   true,
+			"message": "Invalid Body Request",
+		})
+	}
+
+	if loginRequest.Email == "" || loginRequest.Password == "" {
+		return c.Status(400).JSON(fiber.Map{
+			"error":   true,
+			"message": "All Fields Are Required",
+		})
+	}
+	return c.Status(200).JSON(fiber.Map{
+		"error":   false,
 		"message": "Login Successful",
 	})
 }

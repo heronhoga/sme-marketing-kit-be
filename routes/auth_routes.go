@@ -7,4 +7,5 @@ import (
 
 func AuthRoutes(r fiber.Router, authHandler *handlers.AuthHandler) {
 	r.Post("/login", authHandler.Login)
+	r.Post("/register", authHandler.Register)
 }
