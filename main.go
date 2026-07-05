@@ -27,7 +27,6 @@ func main() {
 		log.Fatal(err)
 	}
 
-	
 	app := fiber.New()
 
 	authRepo := repositories.NewAuthRepository(dbconn)

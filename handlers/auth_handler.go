@@ -73,8 +73,27 @@ func (h *AuthHandler) Login(c fiber.Ctx) error {
 			"message": "All Fields Are Required",
 		})
 	}
+
+	err = utils.CheckEmailPattern(loginRequest.Email)
+	if err != nil {
+		return c.Status(400).JSON(fiber.Map{
+			"error": true,
+			"message": "Invalid Email Format",
+		})
+	}
+
+	accessToken, refreshToken, err := h.service.LoginService(c, loginRequest)
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{
+			"error": true,
+			"message": err.Error(),
+		})
+	}
+	
 	return c.Status(200).JSON(fiber.Map{
 		"error":   false,
 		"message": "Login Successful",
+		"access_token": accessToken,
+		"refresh_token": refreshToken,
 	})
 }
