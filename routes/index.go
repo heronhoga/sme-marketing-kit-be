@@ -8,5 +8,7 @@ import (
 func RoutesInit(r *fiber.App, authHandler *handlers.AuthHandler) {
 	api := r.Group("/api")
 	AuthRoutes(api, authHandler)
+
+	
 	
 }
